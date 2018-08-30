@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-# from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import Http404
 from rest_framework import (
@@ -7,6 +6,8 @@ from rest_framework import (
     permissions,
     status,
 )
+from rest_auth.registration.views import LoginView
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -124,3 +125,7 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+# to circumvent CSRF issue
+class LoginViewCustom(LoginView):
+    authentication_classes = (TokenAuthentication,)
