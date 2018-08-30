@@ -25,8 +25,8 @@ SECRET_KEY = '#*u%a62!7%utcvh#boz#=i=y7mzlg(po)m1t_8awa1te+o1w&p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'd169fd58.ngrok.io']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -136,7 +136,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# rest_framework config
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
 }
+
+# allauth config
+AUTHENTICATION_BACKENDS = (
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
