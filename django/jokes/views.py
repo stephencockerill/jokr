@@ -15,11 +15,11 @@ from rest_framework.views import APIView
 
 from jokes.models import (
     Joke,
-    JokeRating,
+    JokeReaction,
 )
 from jokes.permissions import IsAuthorOrReadOnly
 from jokes.serializers import (
-    JokeRatingSerializer,
+    JokeReactionSerializer,
     JokeSerializer,
     UserSerializer,
 )
@@ -31,7 +31,7 @@ User = get_user_model()
 def api_root(request, format=None):
     return Response({
         'jokes': reverse('joke-list', request=request, format=format),
-        'ratings': reverse('rating-list', request=request, format=format),
+        'reactions': reverse('reaction-list', request=request, format=format),
         'users': reverse('customuser-list', request=request, format=format),
     })
 
@@ -55,8 +55,12 @@ class JokeList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Joke.objects.all()
         if 'is_rated' in self.request.query_params:
+            is_rated = self.request.query_params.get('is_rated')
+            if is_rated == 'true':
+                # jokes already rated by user
+                return queryset.filter(Q(reactions__user=self.request.user))
             # jokes not yet rated by user
-            queryset = queryset.filter(~Q(ratings__user=self.request.user))
+            return queryset.filter(~Q(reactions__user=self.request.user))
         return queryset
 
 
@@ -75,9 +79,9 @@ class JokeList(generics.ListCreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class JokeRatingList(APIView):
+class JokeReactionList(APIView):
     """
-    List joke rating, or create jokes ratings.
+    List joke reactions, or create jokes reactions.
     """
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
@@ -87,31 +91,44 @@ class JokeRatingList(APIView):
         context = {'request': request}
         joke_id = request.GET.get('joke')
         if joke_id:
-            rating = JokeRating.objects.filter(
+            reaction = JokeReaction.objects.filter(
                 joke_id=joke_id,
                 user=request.user,
             ).first()
-            if rating:
-                serializer = JokeRatingSerializer(rating, context=context)
+            if reaction:
+                serializer = JokeReactionSerializer(reaction, context=context)
                 return Response(serializer.data)
             raise Http404
 
-        ratings = JokeRating.objects.filter(user=request.user)
-        serializer = JokeRatingSerializer(ratings, context=context, many=True)
+        reactions = JokeReaction.objects.filter(user=request.user)
+        serializer = JokeReactionSerializer(reactions, context=context, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         context = {'request': request}
-        # support batch create
-        many = isinstance(request.data, list)
-        print(request.data)
-        serializer = JokeRatingSerializer(
-            data=request.data,
-            many=many,
-            context=context,
-        )
+        joke_id = request.data.get('joke')
+        existing = JokeReaction.objects.filter(
+            joke_id=joke_id,
+            user=request.user,
+        ).first()
+        # update if reaction exists
+        update = False
+        if existing:
+            update = True
+            serializer = JokeReactionSerializer(
+                existing,
+                data=request.data,
+                context=context,
+            )
+        else:
+            serializer = JokeReactionSerializer(
+                data=request.data,
+                context=context,
+            )
+
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            reaction = serializer.save(user=request.user)
+            reaction.joke.update_rating(reaction, update=update)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
