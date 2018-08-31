@@ -1,32 +1,32 @@
 import React from 'react';
-import { 
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+import Register from './Register.js';
+import Login from './Login.js';
+import Jokes from './Jokes.js';
+
+const LoginNavigator = createStackNavigator({
+  Login: { screen: Login},
+  Register: { screen: Register },
+});
+
+const JokesNavigator = createStackNavigator({
+  Jokes : { screen: Jokes},
+});
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {token: true};
+    this.goJokes = this.goJokes.bind(this);
+  }
+
+  goJokes() {
+    this.setState({
+      token: false
+    });
+  }
+
   render() {
-		const pic = {
-			uri: 'https://cdn.pixabay.com/photo/2016/06/09/02/34/clown-1445040_640.png'
-		};
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-				<Image source={pic} style={{width: 300, height: 200}}/>
-      </View>
-    );
+    return( this.state.token ? (<LoginNavigator screenProps = {{goJokes: this.goJokes}}/>) : (<JokesNavigator />));
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
