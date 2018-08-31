@@ -17,7 +17,7 @@ def main():
 
     token = get_token(args.username, args.email, args.password)
 
-    page = 1
+    page = 6
     headers = {'Accept': 'application/json'}
     num_jokes = 0
     while num_jokes < MAX_JOKES:
