@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from jokes.models import (
     Joke,
-    JokeRating,
+    JokeReaction,
 )
 from users.serializers import UserSerializer
 
@@ -23,17 +23,17 @@ class JokeSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class JokeRatingSerializer(serializers.ModelSerializer):
+class JokeReactionSerializer(serializers.ModelSerializer):
     joke = serializers.PrimaryKeyRelatedField(
         queryset=Joke.objects.all(),
     )
     user = UserSerializer(read_only=True)
     class Meta:
-        model = JokeRating
+        model = JokeReaction
         fields = (
             'id',
             'joke',
-            'rating',
+            'reaction',
             'user',
             'created_at',
         )

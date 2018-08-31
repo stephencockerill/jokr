@@ -15,14 +15,14 @@ urlpatterns = [
         views.JokeDetail.as_view(),
         name='joke-detail'
     ),
-    # TODO create view  /jokes/<id>/ratings/ to get all ratings for a joke
+    # TODO create view  /jokes/<id>/reactions/ to get all reactions for a joke
     url(
-        r'^jokes/(?P<joke_id>[0-9]+)/ratings/$',
-        # placeholder until JokeRatingDetail view is made
+        r'^jokes/(?P<joke_id>[0-9]+)/reactions/$',
+        # placeholder until JokeReactionDetail view is made
         views.JokeDetail.as_view(),
-        name='joke-rating-list'
+        name='joke-reaction-list'
     ),
-    url(r'^ratings/$', views.JokeRatingList.as_view(), name='rating-list'),
+    url(r'^reactions/$', views.JokeReactionList.as_view(), name='reaction-list'),
     url(r'^users/$', views.UserList.as_view(), name='customuser-list'),
     url(r'^users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view(), name='customuser-detail'),
 ]
