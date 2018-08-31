@@ -15,16 +15,15 @@ This will clone this repository, setup a pipenv shell, and install all the requi
 python modules to run the server.
 ```
 $ git clone https://github.com/stephencockerill/jokr.git
-$ cd django
 $ pipenv --python 3.6
 $ pipenv shell
 $ pipenv install
 ```
 
 ### Run the API server
-in `jokr/django`:
+Run the following command. `0.0.0.0:8000` configures the server to listen to all incoming IP addresses on port 8000. This is necassary so that the phone application can connect to the API, provided the phone and the server are on the same network.
 ```
-$ python manage.py runserver
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Using API
