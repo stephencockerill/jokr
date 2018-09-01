@@ -16,44 +16,54 @@ class Jokes extends React.Component {
     this.state = {
       jokes: {
         count: 0,
-        next: api.HOST + '/jokes/?is_rated=false',
+        next: api.HOST + '/jokes/?limit=100&is_rated=false',
         previous: '',
         results: [],
       },
       currentIndex: 0,
       isLoading: true,
       outOfJokes: false,
+      getAttempts: 0,
     };
     this.getJokes = this.getJokes.bind(this);
     this.nextJoke = this.nextJoke.bind(this);
+    this.postReaction = this.postReaction.bind(this);
   }
 
   getJokes() {
     url = this.state.jokes.next;
-    count = this.state.jokes.count;
-    token = this.props.screenProps.token
-    if (!url && !count) {
-      console.log('outOfJokes');
-      this.setState({
-        outOfJokes: true,
-      });
-    } else {
-      api.getJokes(url, token, (res) => {
+    getAttempts = this.state.getAttempts + 1;
+    token = this.props.screenProps.token;
+    api.getJokes(url, token, (res) => {
+      if (!res.count) {
+        this.setState({
+          outOfJokes: true,
+          isLoading: false,
+          getAttempts: getAttempts,
+        })
+      } else {
         this.setState({
           jokes: res,
           currentIndex: 0,
           isLoading: false,
+          outOfJokes: false,
+          getAtempts: 0,
         });
-      });
-    }
+      }
+    });
   }
 
   nextJoke() {
-    let nextIndex = this.state.currentIndex + 1;
-    console.log(nextIndex);
+    const nextIndex = this.state.currentIndex + 1;
     this.setState({
       currentIndex: nextIndex,
     })
+  }
+
+  postReaction(jokeId, reaction) {
+    token = this.props.screenProps.token;
+    api.postReaction(jokeId, reaction, token, (res) => {});
+    this.nextJoke();
   }
 
   componentDidMount() {
@@ -65,18 +75,43 @@ class Jokes extends React.Component {
     const currentIndex = this.state.currentIndex;
     const joke = jokes.results[currentIndex];
 
-    if (this.state.outOfJokes) {
-      <View>
-        <Text>Out of jokes :(</Text>
-      </View>
-    } else if (this.state.isLoading) {
-      return (
-        <View>
-          <Text>Loading laughs...</Text>
-        </View>
-      )
-    } else if (!joke) {
-      this.getJokes();
+    // Handy debugging logs
+    /*
+    console.log('~~~~~~~~~~~~~~~~~');
+    console.log('joke', (typeof joke));
+    console.log('currentIndex', currentIndex);
+    console.log('isLoading', this.state.isLoading);
+    console.log('outOfJokes', this.state.outOfJokes);
+    console.log('getAttempts', this.state.getAttempts);
+    */
+
+    if (!joke) {
+      if (this.state.getAttempts < 1) {
+        this.getJokes();
+        return (
+          <View>
+            <Text>Loading laughs...</Text>
+          </View>
+        )
+      } else if (this.state.outOfJokes == true) {
+        return (
+          <View>
+            <Text>Out of jokes :(</Text>
+          </View>
+        )
+      } else if (this.state.isLoading == true) {
+        return (
+          <View>
+            <Text>Loading laughs...</Text>
+          </View>
+        )
+      } else {
+        return (
+          <View>
+            <Text>Something's wrong... stop laughing this isn't funny!</Text>
+          </View>
+        )
+      }
     }
 
     return (
@@ -93,19 +128,27 @@ class Jokes extends React.Component {
             )
           }
         </View>
-        <View style={{flex: 1, justifyContent: 'space_between'}}>
-          <Button
-            onPress={() => {this.nextJoke()}}
-            style={{width: 50}}
-            color="red"
-            title="X"
-          />
-          <Button
-            onPress={() => {this.nextJoke()}}
-            style={{width: 50}}
-            color="green"
-            title="<3"
-          />
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        }}>
+          <View style={{width: 50, height: 50}}>
+            <Button
+              onPress={() => {this.postReaction(joke.id, 'RED_BUTTON')}}
+              style={{width: 50, height: 50}}
+              color="red"
+              title="X"
+            />
+          </View>
+          <View style={{width: 50, height: 50}}>
+            <Button
+              onPress={() => {this.postReaction(joke.id, 'GREEN_BUTTON')}}
+              style={{width: 50, height: 50}}
+              color= "green"
+              title="<3"
+            />
+          </View>
         </View>
       </View>
     );
