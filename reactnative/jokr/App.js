@@ -25,6 +25,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {token: true};
     this.goJokes = this.goJokes.bind(this);
+    this.login = this.login.bind(this);
   }
 
   goJokes() {
@@ -32,8 +33,19 @@ export default class App extends React.Component {
       token: false
     });
   }
+  login(email, password){
+    api.login(email, password, (res)=>{
+      console.log(res.key);
+      if(res.key !== undefined){
+        this.setState({
+          token: res.key
+        });
+      }
+    });
+  }
+
 
   render() {
-    return( this.state.token ? (<LoginNavigator screenProps = {{goJokes: this.goJokes}}/>) : (<JokesNavigator />));
+    return( this.state.token === true ? (<LoginNavigator screenProps = {{goJokes: this.goJokes, login: this.login}}/>) : (<JokesNavigator />));
   }
 }
