@@ -7,7 +7,12 @@ import Register from './screens/Register.js';
 import api from  './utils/api.js';
 
 const LoginNavigator = createStackNavigator({
-  Login: { screen: Login},
+  Login: { 
+    screen: Login,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Jokr',
+    }),
+  },
   Register: { screen: Register },
 });
 
