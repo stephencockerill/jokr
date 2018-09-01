@@ -26,14 +26,18 @@ const LoginNavigator = createStackNavigator({
 });
 
 const JokesNavigator = createStackNavigator({
-  Jokes : { screen: Jokes},
+  Jokes : { screen: Jokes,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Jokr',
+    }), 
+  },
 });
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      token: '',
+      token: '75ef0231a723411b9a317a1fd28494549e7da930',
       jokes: {
         count: 0,
         next: api.HOST + '/jokes/?is_rated=false',

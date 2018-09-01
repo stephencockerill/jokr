@@ -1,11 +1,15 @@
 import React from 'react';
 import { 
-  Button,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  Button,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
+//import { Button } from 'react-native-elements';
+//import Icon from 'react-native-vector-icons/FontAwesome';
 
 import api from  '../utils/api.js';
 
@@ -74,6 +78,8 @@ class Jokes extends React.Component {
     const jokes = this.state.jokes;
     const currentIndex = this.state.currentIndex;
     const joke = jokes.results[currentIndex];
+    const notLikeButton = {uri: 'http://pluspng.com/img-png/tinder-png--1000.png'};
+    const likeButton = {uri: 'https://www.greenheartgames.com/wp-content/uploads/2012/11/greenheartlogosq.png'};
 
     // Handy debugging logs
     /*
@@ -93,13 +99,13 @@ class Jokes extends React.Component {
             <Text>Loading laughs...</Text>
           </View>
         )
-      } else if (this.state.outOfJokes == true) {
+      } else if (this.state.outOfJokes === true) {
         return (
           <View>
             <Text>Out of jokes :(</Text>
           </View>
         )
-      } else if (this.state.isLoading == true) {
+      } else if (this.state.isLoading === true) {
         return (
           <View>
             <Text>Loading laughs...</Text>
@@ -115,13 +121,14 @@ class Jokes extends React.Component {
     }
 
     return (
-      <View>
+      <View style={{backgroundColor: 'black'}}>
         <View>
           {
             joke ?
             (
               <ScrollView>
-                <Text>{joke.text_content}</Text>
+                <Text style={{fontSize:30, color:'white', textAlign:'center'}}>{joke.text_content}</Text>
+                <View style={{margin:200}}/>
               </ScrollView>
             ) : (
               <Text>Out of jokes :(</Text>
@@ -131,23 +138,25 @@ class Jokes extends React.Component {
         <View style={{
           flex: 1,
           flexDirection: 'row',
-          justifyContent: 'space-around'
+          justifyContent: 'space-around',
+          position: 'absolute',
+          top: 420
         }}>
-          <View style={{width: 50, height: 50}}>
-            <Button
-              onPress={() => {this.postReaction(joke.id, 'RED_BUTTON')}}
-              style={{width: 50, height: 50}}
-              color="red"
-              title="X"
-            />
+          <View style={{width: 50, height: 50, left: 20}}>
+            <TouchableOpacity onPress={() => {this.postReaction(joke.id, 'RED_BUTTON')}}>
+              <Image
+                source = {notLikeButton}
+                style={{width: 50, height: 50}}
+              />
+            </TouchableOpacity>
           </View>
-          <View style={{width: 50, height: 50}}>
-            <Button
-              onPress={() => {this.postReaction(joke.id, 'GREEN_BUTTON')}}
-              style={{width: 50, height: 50}}
-              color= "green"
-              title="<3"
-            />
+          <View style={{width: 50, height: 50, left: 200}}>
+            <TouchableOpacity onPress={() => {this.postReaction(joke.id, 'GREEN_BUTTON')}}>
+              <Image 
+                style={{width: 50, height: 50}}
+                source = {likeButton}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
