@@ -11,7 +11,12 @@ import Register from './screens/Register.js';
 import api from  './utils/api.js';
 
 const LoginNavigator = createStackNavigator({
-  Login: { screen: Login},
+  Login: { 
+    screen: Login,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Jokr',
+    }),
+  },
   Register: { screen: Register },
 });
 
@@ -23,7 +28,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      token: 'b525a2cf056ea79b4ed185cd4ce2af53d8c6a360',
+      token: '',
       jokes: {
         count: 0,
         next: api.HOST + '/jokes/?is_rated=false',
@@ -32,6 +37,7 @@ export default class App extends React.Component {
       },
     };
     this.goJokes = this.goJokes.bind(this);
+    this.login = this.login.bind(this);
   }
 
   goJokes() {
@@ -39,13 +45,24 @@ export default class App extends React.Component {
       token: ''
     })
   }
+  login(email, password){
+    api.login(email, password, (res)=>{
+      console.log(res.key);
+      if(res.key !== undefined){
+        this.setState({
+          token: res.key
+        });
+      }
+    });
+  }
+
 
   render() {
     return(
       this.state.token ? (
         <JokesNavigator screenProps = {{token: this.state.token}}/>
       ) : (
-        <LoginNavigator screenProps = {{goJokes: this.goJokes}}/>
+        <LoginNavigator screenProps = {{goJokes: this.goJokes, login: this.login}}}/>
       )
     );
   }
