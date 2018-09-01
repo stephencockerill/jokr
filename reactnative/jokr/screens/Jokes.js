@@ -30,8 +30,10 @@ class Jokes extends React.Component {
 
   getJokes() {
     url = this.state.jokes.next;
+    count = this.state.jokes.count;
     token = this.props.screenProps.token
-    if (!url) {
+    if (!url && !count) {
+      console.log('outOfJokes');
       this.setState({
         outOfJokes: true,
       });
@@ -62,8 +64,6 @@ class Jokes extends React.Component {
     const jokes = this.state.jokes;
     const currentIndex = this.state.currentIndex;
     const joke = jokes.results[currentIndex];
-    console.log('count', jokes.count);
-    console.log('next', jokes.next);
 
     if (this.state.outOfJokes) {
       <View>
@@ -93,10 +93,18 @@ class Jokes extends React.Component {
             )
           }
         </View>
-        <View>
+        <View style={{flex: 1, justifyContent: 'space_between'}}>
           <Button
             onPress={() => {this.nextJoke()}}
-            title="Next"
+            style={{width: 50}}
+            color="red"
+            title="X"
+          />
+          <Button
+            onPress={() => {this.nextJoke()}}
+            style={{width: 50}}
+            color="green"
+            title="<3"
           />
         </View>
       </View>
