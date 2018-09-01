@@ -17,7 +17,12 @@ const LoginNavigator = createStackNavigator({
       title: 'Jokr',
     }),
   },
-  Register: { screen: Register },
+  Register: { 
+    screen: Register,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Registration',
+    }), 
+  },
 });
 
 const JokesNavigator = createStackNavigator({
@@ -36,17 +41,23 @@ export default class App extends React.Component {
         results: [],
       },
     };
-    this.goJokes = this.goJokes.bind(this);
     this.login = this.login.bind(this);
+    this.register = this.register.bind(this);
   }
 
-  goJokes() {
-    this.setState({
-      token: ''
-    })
-  }
+
   login(email, password){
     api.login(email, password, (res)=>{
+      if(res.key !== undefined){
+        this.setState({
+          token: res.key
+        });
+      }
+    });
+  }
+
+  register(username, email, password1, password2){
+    api.register(username, email, password1, password2, (res)=>{
       console.log(res.key);
       if(res.key !== undefined){
         this.setState({
@@ -56,13 +67,12 @@ export default class App extends React.Component {
     });
   }
 
-
   render() {
     return(
       this.state.token ? (
         <JokesNavigator screenProps = {{token: this.state.token}}/>
       ) : (
-        <LoginNavigator screenProps = {{goJokes: this.goJokes, login: this.login}}}/>
+        <LoginNavigator screenProps = {{login: this.login, register: this.register}}/>
       )
     );
   }
