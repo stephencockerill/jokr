@@ -15,7 +15,24 @@ const api = {
     }).then(function(response) {
       return response.json();
     }).then(function(data) {
-      console.log(data);
+      cb(data);
+    }).catch(function(error){
+      console.error('Error:', error);
+    });
+    
+  },
+
+  register: function(username, email, password1, password2, cb){
+    fetch(API_HOST + '/auth/registration/', {
+      method: 'POST',
+      body: JSON.stringify({username: username, email: email, password1: password1, password2, password2}),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
       cb(data);
     }).catch(function(error){
       console.error('Error:', error);
