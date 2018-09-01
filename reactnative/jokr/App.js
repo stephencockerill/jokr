@@ -37,7 +37,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      token: '75ef0231a723411b9a317a1fd28494549e7da930',
+      token: '',
       jokes: {
         count: 0,
         next: api.HOST + '/jokes/?is_rated=false',
