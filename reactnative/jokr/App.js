@@ -1,8 +1,10 @@
-import React from 'react';
 import { createStackNavigator } from 'react-navigation';
-import Register from './Register.js';
-import Login from './Login.js';
-import Jokes from './Jokes.js';
+import React from 'react';
+
+import Jokes from './screens/Jokes.js';
+import Login from './screens/Login.js';
+import Register from './screens/Register.js';
+import api from  './utils/api.js';
 
 const LoginNavigator = createStackNavigator({
   Login: { screen: Login},
