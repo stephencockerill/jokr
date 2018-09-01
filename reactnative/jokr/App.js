@@ -1,5 +1,9 @@
 import { createStackNavigator } from 'react-navigation';
 import React from 'react';
+import {
+  Text,
+  View,
+} from 'react-native';
 
 import Jokes from './screens/Jokes.js';
 import Login from './screens/Login.js';
@@ -23,15 +27,23 @@ const JokesNavigator = createStackNavigator({
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {token: true};
+    this.state = {
+      token: '',
+      jokes: {
+        count: 0,
+        next: api.HOST + '/jokes/?is_rated=false',
+        previous: '',
+        results: [],
+      },
+    };
     this.goJokes = this.goJokes.bind(this);
     this.login = this.login.bind(this);
   }
 
   goJokes() {
     this.setState({
-      token: false
-    });
+      token: ''
+    })
   }
   login(email, password){
     api.login(email, password, (res)=>{
@@ -46,6 +58,12 @@ export default class App extends React.Component {
 
 
   render() {
-    return( this.state.token === true ? (<LoginNavigator screenProps = {{goJokes: this.goJokes, login: this.login}}/>) : (<JokesNavigator />));
+    return(
+      this.state.token ? (
+        <JokesNavigator screenProps = {{token: this.state.token}}/>
+      ) : (
+        <LoginNavigator screenProps = {{goJokes: this.goJokes, login: this.login}}}/>
+      )
+    );
   }
 }
