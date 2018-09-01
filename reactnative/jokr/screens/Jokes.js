@@ -20,18 +20,38 @@ class Jokes extends React.Component {
         previous: '',
         results: [],
       },
+      currentIndex: 0,
+      isLoading: true,
+      outOfJokes: false,
     };
     this.getJokes = this.getJokes.bind(this);
+    this.nextJoke = this.nextJoke.bind(this);
   }
 
   getJokes() {
     url = this.state.jokes.next;
     token = this.props.screenProps.token
-    api.getJokes(url, token, (res) => {
+    if (!url) {
       this.setState({
-        jokes: res
+        outOfJokes: true,
       });
-    });
+    } else {
+      api.getJokes(url, token, (res) => {
+        this.setState({
+          jokes: res,
+          currentIndex: 0,
+          isLoading: false,
+        });
+      });
+    }
+  }
+
+  nextJoke() {
+    let nextIndex = this.state.currentIndex + 1;
+    console.log(nextIndex);
+    this.setState({
+      currentIndex: nextIndex,
+    })
   }
 
   componentDidMount() {
@@ -39,23 +59,46 @@ class Jokes extends React.Component {
   }
   
   render() {
+    const jokes = this.state.jokes;
+    const currentIndex = this.state.currentIndex;
+    const joke = jokes.results[currentIndex];
+    console.log('count', jokes.count);
+    console.log('next', jokes.next);
+
+    if (this.state.outOfJokes) {
+      <View>
+        <Text>Out of jokes :(</Text>
+      </View>
+    } else if (this.state.isLoading) {
+      return (
+        <View>
+          <Text>Loading laughs...</Text>
+        </View>
+      )
+    } else if (!joke) {
+      this.getJokes();
+    }
+
     return (
       <View>
-        <Text>Jokes Page</Text>
-        {
-          this.state.jokes.results.length > 0 ?
-          (
-            <ScrollView>
-            {
-              this.state.jokes.results.map((joke, index) => (
-                <Text key={index}>{joke.text_content}</Text>
-              ))
-            }
-            </ScrollView>
-          ) : (
-              <Text>No jokes</Text>
-          )
-        }
+        <View>
+          {
+            joke ?
+            (
+              <ScrollView>
+                <Text>{joke.text_content}</Text>
+              </ScrollView>
+            ) : (
+              <Text>Out of jokes :(</Text>
+            )
+          }
+        </View>
+        <View>
+          <Button
+            onPress={() => {this.nextJoke()}}
+            title="Next"
+          />
+        </View>
       </View>
     );
   }
