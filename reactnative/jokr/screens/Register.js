@@ -46,13 +46,6 @@ class Register extends React.Component {
 						underlineColorAndroid='transparent'
             secureTextEntry={true} 
             placeholder='Password' 
-            onChangeText={(password) => this.setState({password})}
-          />
-          <TextInput 
-            style={styles.input} 
-						underlineColorAndroid='transparent'
-            placeholder='Password' 
-            secureTextEntry={true} 
             onChangeText={(password1) => this.setState({password1})}
           />
           <TextInput 

@@ -1,3 +1,4 @@
+import Dimensions from 'Dimensions';
 import React from 'react';
 import { 
   ScrollView,
@@ -8,8 +9,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-//import { Button } from 'react-native-elements';
-//import Icon from 'react-native-vector-icons/FontAwesome';
 
 import api from  '../utils/api.js';
 
@@ -121,8 +120,14 @@ class Jokes extends React.Component {
     }
 
     return (
-      <View style={{backgroundColor: 'black'}}>
-        <View>
+      <View style={{
+        flex: 1,
+        backgroundColor: 'black',
+      }}>
+        <View style={{
+          height: BIG_HEIGHT,
+          width: DEVICE_WIDTH,
+        }}>
           {
             joke ?
             (
@@ -135,33 +140,57 @@ class Jokes extends React.Component {
             )
           }
         </View>
-        <View style={{
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          position: 'absolute',
-          top: 420
-        }}>
-          <View style={{width: 50, height: 50, left: 20}}>
-            <TouchableOpacity onPress={() => {this.postReaction(joke.id, 'RED_BUTTON')}}>
-              <Image
-                source = {notLikeButton}
-                style={{width: 50, height: 50}}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={{width: 50, height: 50, left: 200}}>
-            <TouchableOpacity onPress={() => {this.postReaction(joke.id, 'GREEN_BUTTON')}}>
-              <Image 
-                style={{width: 50, height: 50}}
-                source = {likeButton}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+
+        <View style={styles.buttonsWrapper}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {this.postReaction(joke.id, 'RED_BUTTON')}}>
+            <Image
+              source={notLikeButton}
+              style={{width: 50, height: 50}}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {this.postReaction(joke.id, 'GREEN_BUTTON')}}>
+            <Image
+              style={{width: 50, height: 50}}
+              source={likeButton}
+            />
+          </TouchableOpacity>
+				</View>
+
       </View>
     );
   }
 }
+
+const DEVICE_WIDTH = Dimensions.get('window').width;
+const DEVICE_HEIGHT = Dimensions.get('window').height;
+const SMALL_HEIGHT = DEVICE_HEIGHT * .3;
+const BIG_HEIGHT = DEVICE_HEIGHT * .7;
+
+const styles = StyleSheet.create({
+	container: {
+    flex: 1,
+    backgroundColor: 'black'
+	},
+	buttonsWrapper: {
+    height: SMALL_HEIGHT,
+    width: DEVICE_WIDTH,
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		alignItems: 'center',
+	},
+	button: {
+		width: 125,
+		height: 50,
+		borderRadius: 5,
+		alignItems: 'center',
+		justifyContent: 'center',
+	}
+});
 
 export default Jokes;
