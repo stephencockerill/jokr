@@ -4,8 +4,8 @@ import time
 
 SOURCE_URL = 'https://icanhazdadjoke.com'
 DEST_URL = 'http://localhost:8000'
-MAX_JOKES = 200
-WAIT = 5
+MAX_JOKES = 600
+WAIT = 1
 
 
 def main():
