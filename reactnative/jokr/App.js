@@ -14,7 +14,7 @@ const LoginNavigator = createStackNavigator({
   Login: { 
     screen: Login,
     navigationOptions: ({ navigation }) => ({
-      title: 'Jokr',
+      header: null
     }),
   },
   Register: { 
@@ -27,8 +27,8 @@ const LoginNavigator = createStackNavigator({
 
 const JokesNavigator = createStackNavigator({
   Jokes : { screen: Jokes,
-    navigationOptions: ({ navigation }) => ({
-      title: 'Jokr',
+    navigationOptions: ({ navigation}) => ({
+      header: null
     }), 
   },
 });

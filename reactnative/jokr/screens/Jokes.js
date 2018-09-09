@@ -8,6 +8,8 @@ import {
   Button,
   TouchableOpacity,
   Image,
+  StatusBar,
+
 } from 'react-native';
 
 import api from  '../utils/api.js';
@@ -79,6 +81,7 @@ class Jokes extends React.Component {
     const joke = jokes.results[currentIndex];
     const notLikeButton = {uri: 'http://pluspng.com/img-png/tinder-png--1000.png'};
     const likeButton = {uri: 'https://www.greenheartgames.com/wp-content/uploads/2012/11/greenheartlogosq.png'};
+    const saveButton = {uri: 'https://orig00.deviantart.net/a7a3/f/2016/295/b/0/tinder_super_like_star_by_topher147-dalwd0y.png'};
 
     // Handy debugging logs
     /*
@@ -123,7 +126,9 @@ class Jokes extends React.Component {
       <View style={{
         flex: 1,
         backgroundColor: 'black',
+
       }}>
+
         <View style={{
           height: BIG_HEIGHT,
           width: DEVICE_WIDTH,
@@ -148,6 +153,14 @@ class Jokes extends React.Component {
             <Image
               source={notLikeButton}
               style={{width: 50, height: 50}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {this.postReaction(joke.id, 'SAVE')}}>
+            <Image
+              style={{width: 40, height: 40}}
+              source={saveButton}
             />
           </TouchableOpacity>
 
