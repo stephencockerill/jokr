@@ -1,14 +1,19 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from rest_framework import (
     generics,
     permissions,
     status,
+    viewsets,
 )
 from rest_auth.registration.views import LoginView
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (
+    api_view,
+    list_route,
+)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
@@ -61,6 +66,12 @@ class JokeList(generics.ListCreateAPIView):
                 return queryset.filter(Q(reactions__user=self.request.user))
             # jokes not yet rated by user
             return queryset.filter(~Q(reactions__user=self.request.user))
+        elif 'reaction' in self.request.query_params:
+            reaction = self.request.query_params.get('reaction')
+            return queryset.filter(Q(
+                reactions__user=self.request.user,
+                reactions__reaction=reaction,
+            ))
         return queryset
 
 
@@ -87,6 +98,7 @@ class JokeReactionList(APIView):
         permissions.IsAuthenticatedOrReadOnly,
         IsAuthorOrReadOnly
     )
+
     def get(self, request, format=None):
         context = {'request': request}
         joke_id = request.GET.get('joke')
@@ -134,14 +146,19 @@ class JokeReactionList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserList(generics.ListCreateAPIView):
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing user instances.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @list_route(permission_classes=[permissions.IsAuthenticated])
+    def me(self, request, *args, **kwargs):
+        self.object = get_object_or_404(User, pk=request.user.id)
+        serializer = self.get_serializer(self.object)
+        return Response(serializer.data)
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 # to circumvent CSRF issue
 class LoginViewCustom(LoginView):
