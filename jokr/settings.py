@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # 3rd party
     'allauth',
     'allauth.account',
+    'django_filters',
     'rest_auth',
     'rest_auth.registration',
     'rest_framework',
