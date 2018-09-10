@@ -12,6 +12,7 @@ requests = "*"
 argparse = "*"
 gunicorn = "*"
 django-filter = "*"
+django-environ = "*"
 
 [dev-packages]
 
